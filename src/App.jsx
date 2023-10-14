@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { createContext } from 'react';
 
 import Todo from './Components/Todo';
-import { SettingsProvider } from './Context/Settings';
+export const GlobalContext = createContext(null);
 
-const App = () => {
-  return (
-    <SettingsProvider>
-      <Todo />
-    </SettingsProvider>
-  );
-};
-
-export default App
+export default class App extends React.Component {
+  render() {
+    return (
+      <GlobalContext.Provider
+      value={{
+        displayCount: 1,
+        hideCompleted: false,
+        sortWord: 'difficulty',
+      }}
+      >
+        <Todo />
+      </GlobalContext.Provider>
+    );
+  }
+}
