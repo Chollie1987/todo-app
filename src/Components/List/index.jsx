@@ -1,42 +1,65 @@
-// TodoList.js
-import React from 'react';
-import { useSettings } from './SettingsContext';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import { useContext, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 
-const TodoList = ({ list, toggleComplete }) => {
-    const { settings } = useSettings();
-    const [currentPage, setCurrentPage] = React.useState(1);
+import { Pagination } from '@mui/material';
+import { GlobalContext } from '../../App';
 
-    const startIndex = (currentPage - 1) * settings.maxItems;
 
-    const handlePageChange = (event, page) => {
-        setCurrentPage(page);
-    };
+const TodoList = ({ list, toggleComplete, incomplete }) => {
+   const { hideCompleted, displayCount } = useContext(GlobalContext);
+   const [count, setCount] = useState(0);
+   const [page, setPage] = useState(1);
 
-    const filteredList = settings.hideCompleted ? list.filter(item => !item.complete) : list;
+   const listToUse = useMemo(() => {
+    console.log(hideCompleted, incomplete, list);
+    if(hideCompleted) return incomplete;
+    else return list;
+   }, [hideCompleted, incomplete, list]);
 
-    return (
-        <>
-            {filteredList.slice(startIndex, startIndex + settings.maxItems).map((item) => (
-                <div key={item.id}>
-                    <p>{item.text}</p>
-                    <p><small>Assigned to: {item.assignee}</small></p>
-                    <p><small>Difficulty: {item.difficulty}</small></p>
-                    <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>
-                    <hr />
-                </div>
-            ))}
-            <Stack spacing={2}>
-                <Pagination
-                    count={Math.ceil(filteredList.length / settings.maxItems)}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    color="primary"
-                />
-            </Stack>
-        </>
-    );
-};
+   useEffect(() => {
+    const totalPages = Math.floor(listToUse.length / displayCount);
+    const addOne = listToUse.length % displayCount;
+    console.log(totalPages, addOne);
+    setCount(addOne ? totalPages + 1 : totalPages);
+   }, [displayCount, listToUse]);
 
-export default TodoList;
+   const handlePageChange = (e, ePage) => {
+    setPage(ePage);
+   };
+
+   const startIndex = useMemo(() => {
+    return (page - 1) * displayCount;
+   }, [displayCount, page]);
+
+   const endIndex = useMemo(() => {
+    return (page - 1) * displayCount + displayCount;
+   }, [page, displayCount]);
+
+   return (
+    <>
+           {listToUse.slice(startIndex, endIndex).map((item) => (
+               <div key={item.id}>
+                   <p>{item.text}</p>
+                   <p>
+                       <small>Assigned to: {item.assignee}</small>
+                   </p>
+                   <p>
+                       <small>Difficulty: {item.difficulty}</small>
+                   </p>
+                   <div onClick={() => toggleComplete(item.id)}>
+                       Complete: {item.complete.toString()}
+                   </div>
+                   <hr />
+               </div>
+           ))}
+           <Pagination
+               count={count}
+               variant="outlined"
+               color="secondary"
+               onChange={handlePageChange}
+           />
+    </>
+   );
+ };
+
+ export default TodoList;
