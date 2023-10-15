@@ -6,34 +6,35 @@ import { GlobalContext } from '../../App';
 
 
 const TodoList = ({ list, toggleComplete, incomplete }) => {
-   const { hideCompleted, displayCount } = useContext(GlobalContext);
+   const { showCompleted, itemsPerPage } = useContext(GlobalContext);
    const [count, setCount] = useState(0);
    const [page, setPage] = useState(1);
 
    const listToUse = useMemo(() => {
-    console.log(hideCompleted, incomplete, list);
-    if(hideCompleted) return incomplete;
+    console.log(showCompleted, incomplete, list);
+    if(showCompleted) return incomplete;
     else return list;
-   }, [hideCompleted, incomplete, list]);
+   }, [showCompleted, incomplete, list]);
 
    useEffect(() => {
-    const totalPages = Math.floor(listToUse.length / displayCount);
-    const addOne = listToUse.length % displayCount;
+    console.log(listToUse, itemsPerPage);
+    const totalPages = Math.floor(listToUse.length / itemsPerPage);
+    const addOne = listToUse.length % itemsPerPage;
     console.log(totalPages, addOne);
     setCount(addOne ? totalPages + 1 : totalPages);
-   }, [displayCount, listToUse]);
+   }, [itemsPerPage, listToUse]);
 
    const handlePageChange = (e, ePage) => {
     setPage(ePage);
    };
 
    const startIndex = useMemo(() => {
-    return (page - 1) * displayCount;
-   }, [displayCount, page]);
+    return (page - 1) * itemsPerPage;
+   }, [itemsPerPage, page]);
 
    const endIndex = useMemo(() => {
-    return (page - 1) * displayCount + displayCount;
-   }, [page, displayCount]);
+    return (page - 1) * itemsPerPage + itemsPerPage;
+   }, [page, itemsPerPage]);
 
    return (
     <>

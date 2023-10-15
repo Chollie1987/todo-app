@@ -1,27 +1,23 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const SettingsContext = createContext();
+export const SettingsContext = createContext();
 
-const SettingsProvider = ({ children }) => {
-    const [settings, setSettings] = useState({
-        maxItems: 3,
-        hideCompleted: true,
-        sort: 'difficulty',
-    });
+export const SettingsProvider = ({ children }) => {
+    const [showCompleted, setShowCompleted] = useState(true);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    const updateSettings = (newSettings) => {
+        setShowCompleted(newSettings.showCompleted);
+        setItemsPerPage(newSettings.itemsPerPage);
+    };
 
     return (
-        <SettingsContext.Provider value={{ settings, setSettings }}>
+        <SettingsContext.Provider value={{ showCompleted, itemsPerPage, updateSettings }}>
             {children}
         </SettingsContext.Provider>
     );
 };
 
-const useSettings = () => {
-    const context = useContext(SettingsContext);
-    if (!context) {
-        throw new Error('useSettings must be used within a SettingsProvider');
-    }
-    return context;
+export const useSettings = () => {
+    return useContext(SettingsContext);
 };
-
-export { SettingsProvider, useSettings };
