@@ -4,6 +4,8 @@ import Header from '../Header';
 import TodoForm from '../todoForm';
 import TodoList from '../List';
 import { v4 as uuid } from 'uuid';
+import SettingsForm from '../../Context/Settings/SettingsForm';
+import SettingsPage from '../../Context/Settings/SettingsPage';
 
 const Todo = () => {
 
@@ -52,7 +54,8 @@ const Todo = () => {
   return (
     <>
       <Header incomplete={incomplete} />
-
+      {/* <SettingsPage/>
+      <SettingsForm/> */}
       <TodoForm
         handleChange={handleChange}
         handleSubmit={handleSubmit}
