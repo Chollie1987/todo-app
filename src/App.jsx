@@ -1,5 +1,9 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import { AuthProvider  } from './Context/Auth';
+import Auth from './Components/Auth';
+import Login from './Components/Login';
+import LoginContext from './Context/Auth/index'
 import SettingsPage from './Context/Settings/SettingsPage';
 import Todo from './Components/Todo';
 import Title from './Components/Header/Title';
@@ -35,9 +39,28 @@ const App = () => {
   }, []);
 
   return (
+    <LoginContext>
+      <Login />
+
+      <Auth>
+        <div>Any valid user can see this</div>
+      </Auth>
+
+      <Auth capability="create">
+        <div>Users with create access can see this</div>
+      </Auth>
+
+      <Auth capability="update">
+        <div>Users with update access can see this</div>
+      </Auth>
+
+      <Auth capability="delete">
+        <div>Users with delete access can see this</div>
+      </Auth>
     <GlobalContext.Provider value={{updateSettings, showCompleted, itemsPerPage }}>
       <RouterProvider router={router}/>
     </GlobalContext.Provider>
+    </LoginContext>
   );
 };
 
